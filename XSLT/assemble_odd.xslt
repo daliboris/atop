@@ -99,12 +99,12 @@
         <xsl:when test="contains( $vTargetVal, '#')">
           <xsl:variable name="vTargetUriPart" select="substring-before( $vTargetVal, '#')" as="xs:string"/>
           <xsl:variable name="vTargetFragment" select="substring-after( $vTargetVal, '#')" as="xs:string"/>
-          <xsl:variable name="vTargetDoc" select="document( atop:resolve-uri( $vTargetUriPart cast as xs:anyURI, () ) )" as="document-node()"/>
+          <xsl:variable name="vTargetDoc" select="document( atop:resolve-uri( $vTargetUriPart cast as xs:anyURI, / ) )" as="document-node()"/>
           <xsl:sequence select="id( $vTargetFragment, $vTargetDoc )"/>
         </xsl:when>
         <!--
-          If it does not contain a ‘#’, then it points to an entire document. Must be that
-          the outermost of element of that document is a <specGrp>, so return it.
+          If it does not contain a ‘#’, then it points to an entire document. Must be
+          that the outermost element of that document is a <specGrp>, so return it.
         -->
         <xsl:otherwise>
           <xsl:sequence select="document( atop:resolve-uri( $vTargetVal cast as xs:anyURI, () ) )/specGrp"/>
@@ -112,6 +112,23 @@
       </xsl:choose>
     </xsl:variable>
     <xsl:apply-templates select="$vTargetSpecGrp/*"/>
+  </xsl:template>
+
+  <xd:doc>
+    <xd:desc>A <gi>specGrp</gi> that is pointed to by a
+    <gi>specGrpRef</gi> gets ignored (as it is processed
+    when &amp; where the <gi>specGrpRef</gi> occurs).</xd:desc>
+  </xd:doc>
+  <xsl:template match="specGrp[ //specGrpRef[ @target => normalize-space() => substring(2) eq current()/@xml:id ] ]"/>
+
+  <xd:doc>
+    <xd:desc>QUESTION: What happens to a <gi>specGrp</gi> that is
+    <emph>not</emph> referred to by a <gi>specGrpRef</gi>?</xd:desc>
+  </xd:doc>
+  <xsl:template match="specGrp">
+    <!-- Only matches those that are NOT pointed at by a local <specGrpRef>,
+	 as previous template catches those at a higher priority. -->
+    <xsl:message>DEBUG: WTF? :GUBED</xsl:message>
   </xsl:template>
   
   <xd:doc>
