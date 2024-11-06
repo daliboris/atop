@@ -29,6 +29,7 @@
       <arg value="-o:${basedir}/Tests/xspec_runner.xml"/>
       <arg value="files=${xspec.files}"/>
       <arg value="sequencesSeparator=${sequenceSeparator}"/>
+      <arg value="-xi"/>
       <arg value="--suppressXsltNamespaceCheck:on"/>
     </java>
     <!--<subant antfile="xspec_runner.xml" buildpath="Tests" target="xspec_runner"/>-->
